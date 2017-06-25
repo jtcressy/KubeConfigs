@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: vvvvv-service
+spec:
+  selector:
+    app: vvvvv-container
+  ports:
+  - name: http
+    port: 80
+  type: NodePort

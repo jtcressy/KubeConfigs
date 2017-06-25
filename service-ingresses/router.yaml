@@ -1,0 +1,34 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: router-server
+subsets:
+  - addresses:
+      - ip: 192.168.20.1
+    ports:
+      - port: 443
+        name: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: router-server
+spec:
+  ports:
+    - protocol: TCP
+      name: http
+      port: 443
+      targetPort: 443
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: router-server
+spec:
+  rules:
+  - host: router.jtcressy.net
+    http:
+      paths:
+      - backend:
+          serviceName: router-server
+          servicePort: http

@@ -1,0 +1,53 @@
+apiVersion: extensions/v1beta1  
+kind: Deployment  
+metadata:  
+   name: ghost-deployment
+spec:  
+   replicas: 1
+   template:
+      metadata:
+         name: ghost-container
+         labels:
+            app: ghost-container
+      spec:
+         containers:
+            - image: ghost:alpine
+              name: ghost-container
+              ports:
+                 - containerPort: 2368
+                   name: ghost-http
+              volumeMounts:
+                 - name: ghost-persistent-storage
+                   mountPath: /var/lib/ghost
+         volumes:
+            - name: ghost-persistent-storage
+              persistentVolumeClaim:
+                claimName: ghost-data
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghost-service
+spec:
+  selector:
+    app: ghost-container
+  ports:
+  - name: http
+    port: 80
+    targetPort: 2368
+  type: NodePort
+status: {}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ghost-ingress
+spec:
+  rules:
+  - host: jtcressy.net
+    http:
+      paths:
+      - backend:
+          serviceName: ghost-service
+          servicePort: http

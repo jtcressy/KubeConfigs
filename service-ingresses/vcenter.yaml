@@ -1,0 +1,45 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: vcenter-server
+subsets:
+  - addresses:
+      - ip: 192.168.20.30
+    ports:
+      - port: 443
+        name: https
+      - port: 80
+        name: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: vcenter-server
+spec:
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 80
+    - protocol: TCP
+      name: https
+      port: 443
+      targetPort: 443
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    traefik.protocol: "https"
+  name: vcenter-server
+spec:
+  rules:
+  - host: vcenter.jtcressy.net
+    http:
+      paths:
+      - backend:
+          serviceName: vcenter-server
+          servicePort: 443
+  tls:
+  - hosts:
+    - vcenter.jtcressy.net

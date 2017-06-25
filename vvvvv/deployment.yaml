@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1  
+kind: Deployment  
+metadata:  
+   name: vvvvv-deployment
+spec:  
+   replicas: 1
+   template:
+      metadata:
+         name: vvvvv-container
+         labels:
+            app: vvvvv-container
+      spec:
+         containers:
+            - image: jtcressy/vvvvv
+              name: vvvvv-container
+              ports:
+                 - containerPort: 80
+                   name: vvvvv-http

@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: vvvvv-ingress
+spec:
+  rules:
+  - host: vvvvv.jtcressy.net
+    http:
+      paths:
+      - backend:
+          serviceName: vvvvv-service
+          servicePort: http

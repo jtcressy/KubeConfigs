@@ -1,0 +1,34 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: plex-server
+subsets:
+  - addresses:
+      - ip: 192.168.20.71
+    ports:
+      - port: 32400
+        name: http
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: plex-server
+spec:
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 32400
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: plex-server
+spec:
+  rules:
+  - host: plex.jtcressy.net
+    http:
+      paths:
+      - backend:
+          serviceName: plex-server
+          servicePort: http
