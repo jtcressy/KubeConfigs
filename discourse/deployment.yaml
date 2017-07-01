@@ -1,0 +1,135 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: discourse
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: discourse
+    spec:
+      containers:
+      - image: bitnami/discourse:latest
+        name: discourse
+        env:
+        - name: DISCOURSE_USERNAME
+          value: "jtcressy"
+        - name: DISCOURSE_PASSWORD
+          value: "temporary_pass"
+        - name: DISCOURSE_EMAIL
+          value: "joel@jtcressy.net"
+        - name: DISCOURSE_DEVELOPER_EMAILS
+          value: 'noreply@jtcressy.net'
+        - name: DISCOURSE_SITENAME
+          value: "jtcressy.net"
+        - name: SMTP_HOST
+          value: "smtp.zoho.com"
+        - name: SMTP_PORT
+          value: "587"
+        - name: SMTP_USER
+          value: "noreply@jtcressy.net"
+        - name: SMTP_PASSWORD
+          value: "wewlad1337"
+        - name: DISCOURSE_POSTGRESQL_USER
+          value: bn_discourse
+        - name: DISCOURSE_POSTGRESQL_PASSWORD
+          value: bitnami1
+        - name: DISCOURSE_POSTGRESQL_NAME
+          value: bitnami_application
+        - name: POSTGRESQL_HOST
+          value: localhost
+        - name: REDIS_HOST
+          value: localhost
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "0m"
+        ports:
+        - containerPort: 3000
+        resources: {}
+        volumeMounts:
+        - mountPath: /bitnami/discourse
+          name: discourse-discourse-data
+      - image: bitnami/postgresql:latest
+        name: postgresql
+        env:
+        - name: POSTGRESQL_USERNAME
+          value: bn_discourse
+        - name: POSTGRESQL_PASSWORD
+          value: bitnami1
+        - name: POSTGRESQL_DATABASE
+          value: bitnami_application
+        resources:
+          requests:
+            memory: "150Mi"
+            cpu: "0m"
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /bitnami/postgresql
+          name: discourse-postgresql-data
+      - image: bitnami/redis:latest
+        name: redis
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "0m"
+        resources: {}
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "yes"
+        volumeMounts:
+        - mountPath: /bitnami/redis
+          name: discourse-redis-data
+      - image: bitnami/discourse:latest
+        args:
+        - nami
+        - start
+        - --foreground
+        - discourse-sidekiq
+        name: sidekiq
+        env:
+        - name: SMTP_HOST
+          value: "smtp.gmail.com"
+        - name: SMTP_PORT
+          value: "587"
+        - name: SMTP_USER
+          value: "zendengamingnetwork@gmail.com"
+        - name: SMTP_PASSWORD
+          value: "M8V3C3.m6k1l4"
+        - name: DISCOURSE_POSTGRESQL_USER
+          value: bn_discourse
+        - name: DISCOURSE_POSTGRESQL_PASSWORD
+          value: bitnami1
+        - name: DISCOURSE_POSTGRESQL_NAME
+          value: bitnami_application
+        - name: POSTGRESQL_HOST
+          value: localhost
+        - name: REDIS_HOST
+          value: localhost
+        resources:
+          requests:
+            memory: "50Mi"
+            cpu: "0m"
+        resources: {}
+        volumeMounts:
+        - mountPath: /bitnami/discourse-sidekiq
+          name: discourse-sidekiq-data
+      restartPolicy: Always
+      volumes:
+      - name: discourse-discourse-data
+        persistentVolumeClaim:
+          claimName: discourse-discourse-data
+      - name: discourse-postgresql-data
+        persistentVolumeClaim:
+          claimName: discourse-postgresql-data
+      - name: discourse-redis-data
+        persistentVolumeClaim:
+          claimName: discourse-redis-data
+      - name: discourse-sidekiq-data
+        persistentVolumeClaim:
+          claimName: discourse-sidekiq-data
+status: {}

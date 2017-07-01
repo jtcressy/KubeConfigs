@@ -13,12 +13,36 @@ spec:
          containers:
             - image: ghost:alpine
               name: ghost-container
+              resources:
+                requests:
+                  memory: "250Mi"
+                  cpu: "100m"
               ports:
                  - containerPort: 2368
                    name: ghost-http
               volumeMounts:
                  - name: ghost-persistent-storage
                    mountPath: /var/lib/ghost
+            - image: krlmlr/debian-ssh
+              name: ssh-ghost-container
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "0m"
+                limits:
+                  memory: "128Mi"
+              env:
+              - name: SSH_KEY
+                valueFrom:
+                  configMapKeyRef:
+                    name: ghost-ssh-config
+                    key: authorized.keys
+              ports:
+              - containerPort: 22
+                name: ssh
+              volumeMounts:
+              - mountPath: /ghost
+                name: ghost-persistent-storage
          volumes:
             - name: ghost-persistent-storage
               persistentVolumeClaim:
@@ -39,6 +63,19 @@ spec:
   type: NodePort
 status: {}
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ghost-ssh-service
+spec:
+  selector:
+    app: ghost-container
+  ports:
+  - name: ssh
+    port: 22
+    targetPort: 22
+  type: NodePort
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -51,3 +88,10 @@ spec:
       - backend:
           serviceName: ghost-service
           servicePort: http
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ghost-ssh-config
+data:
+  authorized.keys: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC1BoMF9lpcaRxkvrAHWlWDaFAcLy2TDT/IOBmwPM4lh5dMbZX76nZjKcQbU144kYdfAVEQG0mwhwdljDDvFvJVnSwZqYP7aep4Tx9YYbmDpwutj3cbN6x3DXOiggroqO8SXjokzinSUGZCF3G0YOY+BarIrHC4tgY8gDm2tdRdVPWvlZ/H+6XnpEy3yXEYT2wCdnwohaZVzCackylEd8Me9vbLqVsS5vo6o2XWba1Inpjig2BAMlL9TRDWvRZ3Nv5VM+DDGXdftST9j0sHWM6Sdfen+3gsVPL8ZmwFlETLziIb11oEL0DXGyUQ+2HGR58ArCMHdTmT0fkvp1aERcOl jtcressy@heimdall.jtcressy.net"

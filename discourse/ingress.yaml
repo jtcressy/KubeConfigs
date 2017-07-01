@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: discourse-ingress
+spec:
+  rules:
+  - host: forums.jtcressy
+    http:
+      paths:
+      - backend:
+          serviceName: discourse
+          servicePort: http
