@@ -12,7 +12,7 @@ spec:
         app: discourse
     spec:
       containers:
-      - image: bitnami/discourse:latest
+      - image: bitnami/discourse:1.7.10-r1
         name: discourse
         env:
         - name: DISCOURSE_USERNAME

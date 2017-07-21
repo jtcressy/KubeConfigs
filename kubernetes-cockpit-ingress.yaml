@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubernetes-cockpit
+spec:
+  rules:
+  - host: kube.jtcressy.net
+    http:
+      paths:
+      - backend:
+          serviceName: kubernetes-cockpit
+          servicePort: 443

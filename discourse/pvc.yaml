@@ -1,6 +1,8 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: managed-nfs-storage
   creationTimestamp: null
   labels:
     io.kompose.service: discourse-sidekiq-data
@@ -16,6 +18,8 @@ status: {}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: managed-nfs-storage
   creationTimestamp: null
   labels:
     io.kompose.service: discourse-redis-data
@@ -30,6 +34,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: managed-nfs-storage
   creationTimestamp: null
   labels:
     io.kompose.service: discourse-postgresql-data
@@ -44,6 +50,8 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
+  annotations:
+    volume.beta.kubernetes.io/storage-class: managed-nfs-storage
   creationTimestamp: null
   labels:
     io.kompose.service: discourse-discourse-data
